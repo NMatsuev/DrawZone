@@ -5,8 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrawZone"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="DrawZone" Height="450" Width="800">
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Height="30" Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Create"></MenuItem>
+                <MenuItem Header="Open"></MenuItem>
+                <MenuItem Header="Save"></MenuItem>
+                <MenuItem Header="Save as"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Border BorderThickness="0,0,1,0" BorderBrush="Gray">
+                <Grid>
+                    <WrapPanel MaxWidth="120" MaxHeight="80">
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                        <ToggleButton MinWidth="20" MinHeight="20" Margin ="4 4 4 4" Background="White"></ToggleButton>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+        <Canvas x:Name="PaintZone"
+                Background="White"
+                PreviewMouseLeftButtonDown="PaintZone_PreviewMouseLeftButtonDown"
+                PreviewMouseLeftButtonUp="PaintZone_PreviewMouseLeftButtonUp"
+                PreviewMouseMove="PaintZone_PreviewMouseMove"
+                Grid.Row="2">
+        </Canvas>
     </Grid>
 </Window>
