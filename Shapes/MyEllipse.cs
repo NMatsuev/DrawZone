@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -11,7 +8,7 @@ namespace DrawZone.Shapes
 {
     class MyEllipse : MySingleShape
     {
-        public override void Draw(MyPoint currentPoint)
+        public override void Draw(Point currentPoint)
         {
             double x = Math.Min(startPoint.X, currentPoint.X);
             double y = Math.Min(startPoint.Y, currentPoint.Y);
@@ -21,7 +18,7 @@ namespace DrawZone.Shapes
             Canvas.SetTop(shape, y);
         }
 
-        public MyEllipse(MyPoint startPoint, SolidColorBrush brush, double thickness)
+        public MyEllipse(Point startPoint, SolidColorBrush brush, double thickness)
         {
             shape = new Ellipse
             {

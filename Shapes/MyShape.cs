@@ -1,33 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyPoint
+    public static class PointExtensions
     {
-        public double X, Y;
-
-        public MyPoint(double x, double y)
+        public static double FindDistanse(Point point1, Point point2)
         {
-            X = x;
-            Y = y;
-        }
-
-        public MyPoint(System.Windows.Point point)
-        {
-            X = point.X;
-            Y = point.Y;
-        }
-
-        public double FindDistanse(MyPoint point)
-        {
-            return Math.Sqrt(Math.Pow(point.X - X, 2) + Math.Pow(point.Y - Y, 2));
+            return Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
         }
 
     }
@@ -38,7 +20,7 @@ namespace DrawZone.Shapes
         public double Width { get { return shape.Width; } set { shape.Width = value; } }
         public double Height { get { return shape.Height; } set { shape.Height = value; } }
 
-        abstract public void Draw(MyPoint currentPoint);
+        abstract public void Draw(Point currentPoint);
         public Shape GetShape()
         {
             return shape;
@@ -48,11 +30,15 @@ namespace DrawZone.Shapes
 
     abstract class MySingleShape : MyShape
     {
-        protected MyPoint startPoint;
+        protected Point startPoint;
     }
 
-    abstract class MyPolyShape : MyShape
+    abstract class MyPolyShape : MySingleShape
     {
-        protected List<MyPoint> points;
+        protected PointCollection points;
+
+        protected bool isPolyMode;
+        public bool IsPolyMode { get { return isPolyMode; } set { isPolyMode = value; } }
+
     }
 }

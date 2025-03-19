@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using DrawZone.Shapes;
 
 namespace DrawZone
@@ -23,7 +11,7 @@ namespace DrawZone
     public partial class MainWindow : Window
     {
         private bool isDrawing;
-        private MyPoint startPoint;
+        private Point startPoint;
         private MyShape currentShape;
         private SolidColorBrush currentBrush = Brushes.Red;
         private double currentThickness = 5;
@@ -35,26 +23,47 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            isDrawing = true;
-            startPoint = new MyPoint(e.GetPosition(PaintZone));
-            //currentShape = new MyLine(startPoint, currentBrush, currentThickness);
-            //currentShape = new MyRectangle(startPoint, currentBrush, currentThickness);
-            //currentShape = new MyEllipse(startPoint, currentBrush, currentThickness);
-            currentShape = new MyRightPolygon(startPoint, currentBrush, currentThickness);
-            PaintZone.Children.Add(currentShape.GetShape());
+            if (currentShape is MyPolyShape && ((MyPolyShape)currentShape).IsPolyMode)
+            {
+                ((MyPolyShape)currentShape).IsPolyMode = false;
+            }
+            else
+            {
+                isDrawing = true;
+                startPoint = e.GetPosition(PaintZone);
+                //currentShape = new MyLine(startPoint, currentBrush, currentThickness);
+                //currentShape = new MyRectangle(startPoint, currentBrush, currentThickness);
+                //currentShape = new MyEllipse(startPoint, currentBrush, currentThickness);
+                //currentShape = new MyRegularPolygon(startPoint, currentBrush, currentThickness);
+                //currentShape = new MyPolyline(startPoint, currentBrush, currentThickness);
+                currentShape = new MyPolygon(startPoint, currentBrush, currentThickness);
+                PaintZone.Children.Add(currentShape.GetShape());
+
+            }
+        }
+
+        private void PaintZone_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if ((currentShape is MyPolyShape) && ((MyPolyShape)currentShape).IsPolyMode)
+            {
+                Point currentPoint = e.GetPosition(PaintZone);
+                currentShape.Draw(currentPoint);
+            }
         }
 
         private void PaintZone_PreviewMouseMove(object sender, MouseEventArgs e)
         {
             if (isDrawing)
             {
-                MyPoint currentPoint = new MyPoint(e.GetPosition(PaintZone));
+                Point currentPoint = e.GetPosition(PaintZone);
                 currentShape.Draw(currentPoint);
             }
         }
 
         private void PaintZone_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (currentShape is MyPolyShape && isDrawing)
+                ((MyPolyShape)currentShape).IsPolyMode = true;
             isDrawing = false;
         }
     }

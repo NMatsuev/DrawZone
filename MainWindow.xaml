@@ -42,6 +42,7 @@
                 PreviewMouseLeftButtonDown="PaintZone_PreviewMouseLeftButtonDown"
                 PreviewMouseLeftButtonUp="PaintZone_PreviewMouseLeftButtonUp"
                 PreviewMouseMove="PaintZone_PreviewMouseMove"
+                PreviewMouseRightButtonDown="PaintZone_PreviewMouseRightButtonDown"
                 Grid.Row="2">
         </Canvas>
     </Grid>

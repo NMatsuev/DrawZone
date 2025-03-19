@@ -2,12 +2,13 @@
 using System;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows;
 
 namespace DrawZone.Shapes
 {
-    class MyRectangle:MySingleShape
+    class MyRectangle : MySingleShape
     {
-        public override void Draw(MyPoint currentPoint) 
+        public override void Draw(Point currentPoint) 
         {
             double x = Math.Min(startPoint.X, currentPoint.X);
             double y = Math.Min(startPoint.Y, currentPoint.Y);
@@ -17,7 +18,7 @@ namespace DrawZone.Shapes
             Canvas.SetTop(shape, y);
         }
 
-        public MyRectangle(MyPoint startPoint, SolidColorBrush brush, double thickness)
+        public MyRectangle(Point startPoint, SolidColorBrush brush, double thickness)
         {
             shape = new Rectangle
             {
