@@ -14,22 +14,22 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Button MinWidth="30" MaxHeight ="40" Margin ="4 0 2 0" Background="White" VerticalAlignment="Center">
-                <Image Source="/Icons/Create.png"></Image>
+                <Image Source="UI/Icons/Create.png"></Image>
             </Button>
             <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
-                <Image Source="/Icons/Open.png"></Image>
+                <Image Source="UI/Icons/Open.png"></Image>
             </Button>
             <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
-                <Image Source="/Icons/SaveAs.png"></Image>
+                <Image Source="UI/Icons/SaveAs.png"></Image>
             </Button>
             <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
-                <Image Source="/Icons/Undo.png"></Image>
+                <Image Source="UI/Icons/Undo.png"></Image>
             </Button>
             <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
-                <Image Source="/Icons/Redo.png"></Image>
+                <Image Source="UI/Icons/Redo.png"></Image>
             </Button>
             <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
-                <Image Source="/Icons/AddPlugin.png"></Image>
+                <Image Source="UI/Icons/AddPlugin.png"></Image>
             </Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 7 0 0" Background="Gray">

@@ -26,7 +26,7 @@ namespace DrawZone.Controls
             button.Margin = new Thickness(4, 4, 4, 4);
             button.Click += clickHandler;
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("Icons/"+imgSource+".png", UriKind.Relative));
+            image.Source = new BitmapImage(new Uri("UI/Icons/"+imgSource+".png", UriKind.Relative));
             image.Width = imageWidth;
             image.Height = imageHeight;
             button.Content = image;

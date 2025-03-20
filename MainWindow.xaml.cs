@@ -5,8 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using DrawZone.Shapes;
+using DrawZone.UI.Controls;
 
 namespace DrawZone
 {
@@ -23,28 +23,16 @@ namespace DrawZone
         private ToggleButton activeButton;
         private Brush currentStroke;
         private Brush currentFill;
-
-        private readonly (string Name, Brush Color)[] colors =
-{
-            ("Черный", Brushes.Black),
-            ("Красный", Brushes.Red),
-            ("Зеленый", Brushes.Green),
-            ("Синий", Brushes.Blue),
-            ("Желтый", Brushes.Yellow),
-            ("Оранжевый", Brushes.Orange),
-            ("Фиолетовый", Brushes.Purple),
-            ("Серый", Brushes.Gray)
-        };
         private double CurrentStrokeThickness { get { return double.Parse(TextBoxStrokeThickness.Text); } }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            foreach (var (name, color) in colors)
+            foreach (var (name, color) in UI.Colors.colors)
             {
-                ComboBoxStroke.Items.Add(CreateColorItem(name, color));
-                ComboBoxFill.Items.Add(CreateColorItem(name, color));
+                MyComboBoxItem.AddColorItem(ComboBoxStroke, name, color);
+                MyComboBoxItem.AddColorItem(ComboBoxFill, name, color);
             }
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -59,30 +47,6 @@ namespace DrawZone
                 ShapeWrapPanel.Children.Add(new Controls.MyShapeButton(name, name, PaintZone_MyShapeButtonClick).Make());
             }
 
-
-        }
-
-        private ComboBoxItem CreateColorItem(string name, Brush color)
-        {
-            return new ComboBoxItem
-            {
-                Content = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    Children =
-                    {
-                        new Rectangle
-                        {
-                            Width = 20,
-                            Height = 20,
-                            Fill = color,
-                            Margin = new Thickness(5, 0, 5, 0)
-                        },
-                        new TextBlock { Text = name }
-                    }
-                },
-                Tag = color
-            };
         }
 
         private void ComboBoxStroke_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,6 +63,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (activeButton == null || currentFill == null || currentStroke == null) return;
             if (currentShape is MyPolyShape && ((MyPolyShape)currentShape).IsPolyMode)
             {
                 ((MyPolyShape)currentShape).IsPolyMode = false;
@@ -167,7 +132,7 @@ namespace DrawZone
                 case MyShapeType.stPolyline: return new MyPolyline(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
                 case MyShapeType.stPolygon: return new MyPolygon(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
                 case MyShapeType.stRegularPolygon: return new MyRegularPolygon(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                default: return null;
+                default: return new MyLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
             }
 
         }
