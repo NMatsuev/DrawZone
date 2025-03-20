@@ -14,7 +14,7 @@ namespace DrawZone.Shapes
 
     }
 
-    abstract class MyShape
+    public abstract class MyShape
     {
         protected Shape shape;
         protected Point startPoint;
@@ -38,7 +38,7 @@ namespace DrawZone.Shapes
 
     }
 
-    abstract class MyPolyShape : MyShape
+    public abstract class MyPolyShape : MyShape
     {
         protected PointCollection points;
 
