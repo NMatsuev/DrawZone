@@ -10,7 +10,7 @@ namespace DrawZone.Shapes
     {
         public override void Draw(Point currentPoint)
         {
-            int numberOfSides = 6;
+            int numberOfSides = 5;
             double radius = PointExtensions.FindDistanse(startPoint, currentPoint);
             double centerX = startPoint.X;
             double centerY = startPoint.Y;

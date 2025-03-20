@@ -56,7 +56,7 @@ namespace DrawZone
 
             foreach (var name in classNames)
             {
-                ShapeWrapPanel.Children.Add(new MyShapeButton(name, name, PaintZone_MyShapeButtonClick).Make());
+                ShapeWrapPanel.Children.Add(new Controls.MyShapeButton(name, name, PaintZone_MyShapeButtonClick).Make());
             }
 
 
