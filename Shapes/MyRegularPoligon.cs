@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyRegularPolygon : MySingleShape
+    class MyRegularPolygon : MyShape
     {
         public override void Draw(Point currentPoint)
         {
@@ -31,14 +31,12 @@ namespace DrawZone.Shapes
             Canvas.SetTop(shape, startPoint.Y - Height / 2);
         }
 
-        public MyRegularPolygon(Point startPoint, SolidColorBrush brush, double thickness)
+        public MyRegularPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Polygon
-            {
-                Stroke = brush,
-                StrokeThickness = thickness
-            };
-            this.startPoint = startPoint;
+            shape = new Polygon();
+            Stroke = stroke;
+            Fill = fill;
+            StrokeThickness = strokeThickness;
         }
     }
 }

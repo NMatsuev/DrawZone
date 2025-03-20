@@ -7,4 +7,53 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Icons\AddPlugin.png" />
+    <None Remove="Icons\Create.png" />
+    <None Remove="Icons\MyEllipse.png" />
+    <None Remove="Icons\MyLine.png" />
+    <None Remove="Icons\MyPolygon.png" />
+    <None Remove="Icons\MyPolyline.png" />
+    <None Remove="Icons\MyRectangle.png" />
+    <None Remove="Icons\MyRegularPolygon.png" />
+    <None Remove="Icons\Open.png" />
+    <None Remove="Icons\Redo.png" />
+    <None Remove="Icons\Save.png" />
+    <None Remove="Icons\SaveAs.png" />
+    <None Remove="Icons\Undo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\AddPlugin.png" />
+    <Resource Include="Icons\MyLine.png" />
+    <Resource Include="Icons\MyPolygon.png" />
+    <Resource Include="Icons\MyPolyline.png" />
+    <Resource Include="Icons\MyRectangle.png" />
+    <Resource Include="Icons\MyRegularPolygon.png" />
+    <Resource Include="Icons\Redo.png" />
+    <Resource Include="Icons\SaveAs.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\Create.png" />
+    <Resource Include="Icons\MyEllipse.png" />
+    <Resource Include="Icons\Open.png" />
+    <Resource Include="Icons\Undo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

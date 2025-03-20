@@ -4,7 +4,7 @@ using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyLine : MySingleShape
+    class MyLine : MyShape
     {
         public override void Draw(Point currentPoint)
         {
@@ -14,14 +14,12 @@ namespace DrawZone.Shapes
             ((Line) shape).Y2 = currentPoint.Y;
         }
 
-        public MyLine(Point startPoint, SolidColorBrush brush, double thickness)
+        public MyLine(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Line
-            {
-                Stroke = brush,
-                StrokeThickness = thickness
-            };
-            this.startPoint = startPoint;
+            shape = new Line();
+            Stroke = stroke;
+            Fill = fill;
+            StrokeThickness = strokeThickness;
         }
     }
 }

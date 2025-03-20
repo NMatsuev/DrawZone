@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -19,18 +14,12 @@ namespace DrawZone.Shapes
             ((Polygon)shape).Points = points;
         }
 
-        public MyPolygon(Point startPoint, SolidColorBrush brush, double thickness)
+        public MyPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Polygon
-            {
-                Stroke = brush,
-                StrokeThickness = thickness
-            };
-            this.startPoint = startPoint;
-            isPolyMode = false;
-            points = new PointCollection();
-            points.Add(startPoint);
-
+            shape = new Polygon();
+            Stroke = stroke;
+            Fill = fill;
+            StrokeThickness = strokeThickness;
         }
     }
 }

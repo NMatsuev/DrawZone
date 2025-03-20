@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -20,18 +14,12 @@ namespace DrawZone.Shapes
             ((Polyline)shape).Points = points;
         }
 
-        public MyPolyline(Point startPoint, SolidColorBrush brush, double thickness)
+        public MyPolyline(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Polyline
-            {
-                Stroke = brush,
-                StrokeThickness = thickness
-            };
-            this.startPoint = startPoint;
-            isPolyMode = false;
-            points = new PointCollection();
-            points.Add(startPoint);
-
+            shape = new Polyline();
+            Stroke = stroke;
+            Fill = fill;
+            StrokeThickness = strokeThickness;
         }
 
     }
