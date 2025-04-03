@@ -8,24 +8,30 @@ namespace DrawZone.Shapes
 {
     class MyRectangle : MyShape
     {
+        private Rectangle rect;
         public override void Draw(Point currentPoint) 
         {
             double x = Math.Min(startPoint.X, currentPoint.X);
             double y = Math.Min(startPoint.Y, currentPoint.Y);
-            Width = Math.Abs(startPoint.X - currentPoint.X);
-            Height = Math.Abs(startPoint.Y - currentPoint.Y);
-            Canvas.SetLeft(shape, x);
-            Canvas.SetTop(shape, y);
+            rect.Width = Math.Abs(startPoint.X - currentPoint.X);
+            rect.Height = Math.Abs(startPoint.Y - currentPoint.Y);
+            Canvas.SetLeft(rect, x);
+            Canvas.SetTop(rect, y);
         }
 
         public MyRectangle(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Rectangle();
-            Width = 0;
-            Height = 0;
-            Stroke = stroke;
-            Fill = fill;
-            StrokeThickness = strokeThickness;
+            rect = new Rectangle();
+            rect.Width = 0;
+            rect.Height = 0;
+            rect.Stroke = stroke;
+            rect.Fill = fill;
+            rect.StrokeThickness = strokeThickness;
+        }
+
+        public override Shape GetShape()
+        {
+            return rect;
         }
     }
 }

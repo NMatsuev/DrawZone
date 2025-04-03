@@ -9,26 +9,21 @@ namespace DrawZone.Controls
 {
     class MyShapeButton
     {
-        private const double imageWidth = 24;
-        private const double imageHeight = 24;
-        private const double minWidth = 25;
-        private const double minHeight = 25;
-        private Brush background = Brushes.White;
         private ToggleButton button;
 
         public MyShapeButton(string imgSource, string name, RoutedEventHandler clickHandler) 
         {
             button = new ToggleButton();
-            button.MinWidth = minWidth; 
-            button.MinHeight = minHeight;
+            button.MinWidth = 25; 
+            button.MinHeight = 25;
             button.Name = "btn"+name;
-            button.Background = background;
+            button.Background = Brushes.White;
             button.Margin = new Thickness(4, 4, 4, 4);
             button.Click += clickHandler;
             Image image = new Image();
             image.Source = new BitmapImage(new Uri("UI/Icons/"+imgSource+".png", UriKind.Relative));
-            image.Width = imageWidth;
-            image.Height = imageHeight;
+            image.Width = 24;
+            image.Height = 24;
             button.Content = image;
         }
 

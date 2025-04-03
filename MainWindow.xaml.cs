@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DrawZone.Shapes;
 using DrawZone.UI.Controls;
+using DrawZone.Factories;
+using System;
 
 namespace DrawZone
 {
@@ -15,21 +18,21 @@ namespace DrawZone
     /// </summary>
     public partial class MainWindow : Window
     {
-        enum MyShapeType { stLine, stRectangle, stEllipse, stPolygon, stPolyline, stRegularPolygon }
         private bool isDrawing;
         private Point startPoint;
         private MyShape currentShape;
-        private MyShapeType currentShapeType;
+        private string currentShapeType;
         private ToggleButton activeButton;
         private Brush currentStroke;
         private Brush currentFill;
-        private double CurrentStrokeThickness { get { return double.Parse(TextBoxStrokeThickness.Text); } }
+        private Dictionary<string, ConstructorInfo> constructors;
+        private double CurrentStrokeThickness { get { return double.Parse(TextBoxStrokeThickness.Text); } set{ TextBoxStrokeThickness.Text = value.ToString(); } }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            foreach (var (name, color) in UI.Colors.colors)
+            foreach (var (name, color) in Utils.Colors.colors)
             {
                 MyComboBoxItem.AddColorItem(ComboBoxStroke, name, color);
                 MyComboBoxItem.AddColorItem(ComboBoxFill, name, color);
@@ -47,6 +50,13 @@ namespace DrawZone
                 ShapeWrapPanel.Children.Add(new Controls.MyShapeButton(name, name, PaintZone_MyShapeButtonClick).Make());
             }
 
+            constructors = ShapeFactory.GetShapeConstructors();
+            currentShapeType = "MyLine";
+            ComboBoxStroke.SelectedItem = ComboBoxStroke.Items.GetItemAt(0);
+            ComboBoxFill.SelectedItem = ComboBoxFill.Items.GetItemAt(0);
+            currentStroke = (Brush)((ComboBoxItem)ComboBoxStroke.SelectedItem).Tag;
+            currentFill = (Brush)((ComboBoxItem)ComboBoxFill.SelectedItem).Tag;
+            CurrentStrokeThickness = 12;
         }
 
         private void ComboBoxStroke_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -63,8 +73,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (activeButton == null || currentFill == null || currentStroke == null) return;
-            if (currentShape is MyPolyShape && ((MyPolyShape)currentShape).IsPolyMode)
+            if (isPolyMode(currentShape))
             {
                 ((MyPolyShape)currentShape).IsPolyMode = false;
             }
@@ -72,7 +81,8 @@ namespace DrawZone
             {
                 isDrawing = true;
                 startPoint = e.GetPosition(PaintZone);
-                currentShape = ShapeFactory(currentShapeType);
+                MyShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] {startPoint, currentStroke, currentFill, CurrentStrokeThickness});
+                currentShape = (shape == null) ? new MyLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness) : shape;
                 PaintZone.Children.Add(currentShape.GetShape());
 
             }
@@ -80,7 +90,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if ((currentShape is MyPolyShape) && ((MyPolyShape)currentShape).IsPolyMode)
+            if (isPolyMode(currentShape))
             {
                 Point currentPoint = e.GetPosition(PaintZone);
                 currentShape.Draw(currentPoint);
@@ -98,7 +108,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (currentShape is MyPolyShape && isDrawing)
+            if (isPolyDrawing(currentShape))
                 ((MyPolyShape)currentShape).IsPolyMode = true;
             isDrawing = false;
         }
@@ -110,31 +120,18 @@ namespace DrawZone
                 activeButton.IsChecked = false;
             }
             activeButton = (ToggleButton)sender;
-            switch (activeButton.Name)
-            {
-                case "btnMyLine": currentShapeType = MyShapeType.stLine; break;
-                case "btnMyRectangle": currentShapeType = MyShapeType.stRectangle; break;
-                case "btnMyEllipse": currentShapeType = MyShapeType.stEllipse; break;
-                case "btnMyPolyline": currentShapeType = MyShapeType.stPolyline; break;
-                case "btnMyPolygon": currentShapeType = MyShapeType.stPolygon; break;
-                case "btnMyRegularPolygon": currentShapeType = MyShapeType.stRegularPolygon; break;
+            currentShapeType = activeButton.Name.Substring(3);
 
-            }
         }
 
-        private MyShape ShapeFactory(MyShapeType shapeType)
+        private bool isPolyMode(MyShape shape)
         {
-            switch (shapeType)
-            {
-                case MyShapeType.stLine: return new MyLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                case MyShapeType.stRectangle: return new MyRectangle(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                case MyShapeType.stEllipse: return new MyEllipse(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                case MyShapeType.stPolyline: return new MyPolyline(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                case MyShapeType.stPolygon: return new MyPolygon(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                case MyShapeType.stRegularPolygon: return new MyRegularPolygon(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-                default: return new MyLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-            }
+            return (shape is MyPolyShape) && ((MyPolyShape)shape).IsPolyMode;
+        }
 
+        private bool isPolyDrawing(MyShape shape)
+        {
+            return (shape is MyPolyShape) && isDrawing;
         }
     }
 }

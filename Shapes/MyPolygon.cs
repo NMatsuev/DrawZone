@@ -6,20 +6,25 @@ namespace DrawZone.Shapes
 {
     class MyPolygon:MyPolyShape
     {
+        Polygon polygon;
         public override void Draw(Point currentPoint)
         {
-            if (!isPolyMode && points.Count != 1)
+            if (!IsPolyMode && points.Count != 1)
                 points.RemoveAt(points.Count - 1);
             points.Add(currentPoint);
-            ((Polygon)shape).Points = points;
+            polygon.Points = points;
         }
 
         public MyPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Polygon();
-            Stroke = stroke;
-            Fill = fill;
-            StrokeThickness = strokeThickness;
+            polygon = new Polygon();
+            polygon.Stroke = stroke;
+            polygon.Fill = fill;
+            polygon.StrokeThickness = strokeThickness;
+        }
+        public override Shape GetShape()
+        {
+            return polygon;
         }
     }
 }

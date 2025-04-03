@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using DrawZone.Shapes;
+
+namespace DrawZone.Factories
+{
+    public static class ShapeFactory
+    {
+        public static Dictionary<string, ConstructorInfo> GetShapeConstructors()
+        {
+            var constructors = new Dictionary<string, ConstructorInfo>();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsClass && !type.IsAbstract && type.Namespace == "DrawZone.Shapes")
+                {
+                    string shapeName = type.Name;
+                    ConstructorInfo constructor = type.GetConstructors().FirstOrDefault();
+                    if (constructor != null)
+                    {
+                        constructors[shapeName] = constructor;
+                    }
+                }
+            }
+
+            return constructors;
+        }
+
+        public static MyShape? CreateShapeInstance(Dictionary<string, ConstructorInfo> constructors, string shapeName, object[] parameters)
+        {
+            if (constructors.TryGetValue(shapeName, out ConstructorInfo? constructor) && constructor != null)
+            {
+                return (MyShape)constructor.Invoke(parameters);
+            }
+            throw new ArgumentException($"Shape '{shapeName}' not found or has no valid constructor.");
+        }
+    }
+}

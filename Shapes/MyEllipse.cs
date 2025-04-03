@@ -8,24 +8,30 @@ namespace DrawZone.Shapes
 {
     class MyEllipse : MyShape
     {
+        private Ellipse ellipse;
         public override void Draw(Point currentPoint)
         {
             double x = Math.Min(startPoint.X, currentPoint.X);
             double y = Math.Min(startPoint.Y, currentPoint.Y);
-            Width = Math.Abs(startPoint.X - currentPoint.X);
-            Height = Math.Abs(startPoint.Y - currentPoint.Y);
-            Canvas.SetLeft(shape, x);
-            Canvas.SetTop(shape, y);
+            ellipse.Width = Math.Abs(startPoint.X - currentPoint.X);
+            ellipse.Height = Math.Abs(startPoint.Y - currentPoint.Y);
+            Canvas.SetLeft(ellipse, x);
+            Canvas.SetTop(ellipse, y);
         }
 
         public MyEllipse(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Ellipse();
-            Width = 0;
-            Height = 0;
-            Stroke = stroke;
-            Fill = fill;
-            StrokeThickness = strokeThickness;
+            ellipse = new Ellipse();
+            ellipse.Width = 0;
+            ellipse.Height = 0;
+            ellipse.Stroke = stroke;
+            ellipse.Fill = fill;
+            ellipse.StrokeThickness = strokeThickness;
+        }
+
+        public override Shape GetShape()
+        {
+            return ellipse;
         }
     }
 }

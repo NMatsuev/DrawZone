@@ -3,11 +3,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using DrawZone.Utils;
 
 namespace DrawZone.Shapes
 {
     class MyRegularPolygon : MyShape
     {
+        private Polygon polygon;
         public override void Draw(Point currentPoint)
         {
             int numberOfSides = 5;
@@ -24,19 +26,24 @@ namespace DrawZone.Shapes
                 points.Add(new Point(x, y));
             }
 
-            ((Polygon)shape).Points = points;
-            RectangleGeometry clipGeometry = new RectangleGeometry(new Rect(0, 0, ((Canvas)shape.Parent).MaxWidth, ((Canvas)shape.Parent).MaxHeight));
-            shape.Clip = clipGeometry;
-            Canvas.SetLeft(shape, startPoint.X - Width / 2);
-            Canvas.SetTop(shape, startPoint.Y - Height / 2);
+            polygon.Points = points;
+            RectangleGeometry clipGeometry = new RectangleGeometry(new Rect(0, 0, ((Canvas)polygon.Parent).MaxWidth, ((Canvas)polygon.Parent).MaxHeight));
+            polygon.Clip = clipGeometry;
+            Canvas.SetLeft(polygon, startPoint.X - polygon.Width / 2);
+            Canvas.SetTop(polygon, startPoint.Y - polygon.Height / 2);
         }
 
         public MyRegularPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            shape = new Polygon();
-            Stroke = stroke;
-            Fill = fill;
-            StrokeThickness = strokeThickness;
+            polygon = new Polygon();
+            polygon.Stroke = stroke;
+            polygon.Fill = fill;
+            polygon.StrokeThickness = strokeThickness;
+        }
+
+        public override Shape GetShape()
+        {
+            return polygon;
         }
     }
 }
