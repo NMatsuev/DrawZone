@@ -8,6 +8,7 @@ namespace DrawZone.Shapes
     public abstract class CustomShape
     {
         protected Point startPoint;
+        public bool IsDrawed { get; set; }
 
         public CustomShape(Point startPoint)
         {

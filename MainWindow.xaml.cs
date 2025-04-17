@@ -102,14 +102,18 @@ namespace DrawZone
                 currentShape.ExitPolyMode();
                 drawingHistory.SaveState(PaintZone);
                 updateButtons();
+                currentShape.IsDrawed = true;
             }
             else
             {
+               
                 isDrawing = true;
                 startPoint = e.GetPosition(PaintZone);
                 CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] {startPoint, currentStroke, currentFill, CurrentStrokeThickness});
                 currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
+                currentShape.IsDrawed = false;
                 PaintZone.Children.Add(currentShape.GetShape());
+
 
             }
         }
@@ -129,6 +133,7 @@ namespace DrawZone
             {
                 Point currentPoint = e.GetPosition(PaintZone);
                 currentShape.Draw(currentPoint);
+                currentShape.IsDrawed = true;
             }
         }
 
@@ -137,8 +142,15 @@ namespace DrawZone
             if (currentShape.SupportsPolyMode && isDrawing)
                 currentShape.EnterPolyMode();
             else if (isDrawing) {
-                drawingHistory.SaveState(PaintZone);
-                updateButtons();
+                if (currentShape.IsDrawed)
+                {
+                    drawingHistory.SaveState(PaintZone);
+                    updateButtons();
+                }
+                else
+                {
+                    PaintZone.Children.RemoveAt(PaintZone.Children.Count-1);
+                }
             }
             isDrawing = false;
         }
