@@ -4,29 +4,27 @@ using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyPolyline:MyPolyShape
+    class CustomPolygon:CustomPolyShape
     {
-        private Polyline polyline;
+        Polygon polygon;
         public override void Draw(Point currentPoint)
         {
             if (!IsPolyMode && points.Count != 1)
                 points.RemoveAt(points.Count - 1);
             points.Add(currentPoint);
-            polyline.Points = points;
+            polygon.Points = points;
         }
 
-        public MyPolyline(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
+        public CustomPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
-            polyline = new Polyline();
-            polyline.Stroke = stroke;
-            polyline.Fill = fill;
-            polyline.StrokeThickness = strokeThickness;
+            polygon = new Polygon();
+            polygon.Stroke = stroke;
+            polygon.Fill = fill;
+            polygon.StrokeThickness = strokeThickness;
         }
-
         public override Shape GetShape()
         {
-            return polyline;
+            return polygon;
         }
-
     }
 }

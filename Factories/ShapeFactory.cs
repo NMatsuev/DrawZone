@@ -29,11 +29,11 @@ namespace DrawZone.Factories
             return constructors;
         }
 
-        public static MyShape? CreateShapeInstance(Dictionary<string, ConstructorInfo> constructors, string shapeName, object[] parameters)
+        public static CustomShape? CreateShapeInstance(Dictionary<string, ConstructorInfo> constructors, string shapeName, object[] parameters)
         {
             if (constructors.TryGetValue(shapeName, out ConstructorInfo? constructor) && constructor != null)
             {
-                return (MyShape)constructor.Invoke(parameters);
+                return (CustomShape)constructor.Invoke(parameters);
             }
             throw new ArgumentException($"Shape '{shapeName}' not found or has no valid constructor.");
         }

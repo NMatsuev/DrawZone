@@ -4,7 +4,7 @@ using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyLine : MyShape
+    class CustomLine : CustomShape
     {
         private Line line;
         public override void Draw(Point currentPoint)
@@ -15,7 +15,7 @@ namespace DrawZone.Shapes
             line.Y2 = currentPoint.Y;
         }
 
-        public MyLine(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
+        public CustomLine(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
             line = new Line();
             line.Stroke = stroke;

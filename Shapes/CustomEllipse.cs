@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 
 namespace DrawZone.Shapes
 {
-    class MyEllipse : MyShape
+    class CustomEllipse : CustomShape
     {
         private Ellipse ellipse;
         public override void Draw(Point currentPoint)
@@ -19,7 +19,7 @@ namespace DrawZone.Shapes
             Canvas.SetTop(ellipse, y);
         }
 
-        public MyEllipse(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
+        public CustomEllipse(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
             ellipse = new Ellipse();
             ellipse.Width = 0;

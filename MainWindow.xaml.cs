@@ -9,7 +9,10 @@ using System.Windows.Media;
 using DrawZone.Shapes;
 using DrawZone.UI.Controls;
 using DrawZone.Factories;
-using System;
+using DrawZone.Controls;
+using DrawZone.Utils;
+using System.Globalization;
+using DrawZone.Core;
 
 namespace DrawZone
 {
@@ -20,69 +23,92 @@ namespace DrawZone
     {
         private bool isDrawing;
         private Point startPoint;
-        private MyShape currentShape;
+        private CustomShape currentShape;
         private string currentShapeType;
         private ToggleButton activeButton;
         private Brush currentStroke;
         private Brush currentFill;
         private Dictionary<string, ConstructorInfo> constructors;
-        private double CurrentStrokeThickness { get { return double.Parse(TextBoxStrokeThickness.Text); } set{ TextBoxStrokeThickness.Text = value.ToString(); } }
+        private DrawingHistory drawingHistory;
+        private double CurrentStrokeThickness { get { return GetStrokeThickness(); } 
+                                                set { TextBoxStrokeThickness.Text = value.ToString(CultureInfo.InvariantCulture); } }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            foreach (var (name, color) in Utils.Colors.colors)
+            foreach (var (name, color) in CustomCmbBoxItemDefaultValues.COLORS)
             {
-                MyComboBoxItem.AddColorItem(ComboBoxStroke, name, color);
-                MyComboBoxItem.AddColorItem(ComboBoxFill, name, color);
+                ComboBoxStroke.Items.Add(new CustomComboBoxItem (name, color));
+                ComboBoxFill.Items.Add(new CustomComboBoxItem(name, color));
             }
 
             Assembly assembly = Assembly.GetExecutingAssembly();
 
             var classNames = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.Namespace == "DrawZone.Shapes")
+            .Where(t => t.IsClass && !t.IsAbstract && t.Namespace == MainDefaultValues.DEFAULT_SHAPES_NAMESPACE)
             .Select(t => t.Name)
             .ToList();
 
             foreach (var name in classNames)
             {
-                ShapeWrapPanel.Children.Add(new Controls.MyShapeButton(name, name, PaintZone_MyShapeButtonClick).Make());
+                var button = new CustomShapeButton(name, name, PaintZone_MyShapeButtonClick);
+
+                if (name == MainDefaultValues.DEFAULT_SHAPE)
+                {
+                    button.IsChecked = true;
+                    activeButton = button;
+                    currentShapeType = name;
+                }
+
+                ShapeWrapPanel.Children.Add(button);
             }
 
             constructors = ShapeFactory.GetShapeConstructors();
-            currentShapeType = "MyLine";
             ComboBoxStroke.SelectedItem = ComboBoxStroke.Items.GetItemAt(0);
             ComboBoxFill.SelectedItem = ComboBoxFill.Items.GetItemAt(0);
-            currentStroke = (Brush)((ComboBoxItem)ComboBoxStroke.SelectedItem).Tag;
-            currentFill = (Brush)((ComboBoxItem)ComboBoxFill.SelectedItem).Tag;
-            CurrentStrokeThickness = 12;
+            currentStroke = ((CustomComboBoxItem)ComboBoxStroke.SelectedItem).Color;
+            currentFill = ((CustomComboBoxItem)ComboBoxFill.SelectedItem).Color;
+            CurrentStrokeThickness = MainDefaultValues.DEFAULT_STROKE_THICKNESS;
+            CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] { startPoint, currentStroke, currentFill, CurrentStrokeThickness });
+            currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
+            drawingHistory = new DrawingHistory();
+            drawingHistory.SaveState(PaintZone);
+            btnRedo.IsEnabled = false;
+            btnUndo.IsEnabled = false;
+        }
+
+        private double GetStrokeThickness()
+        {
+            return (double.TryParse(TextBoxStrokeThickness.Text, CultureInfo.InvariantCulture, out var result)) ? result : 10;
         }
 
         private void ComboBoxStroke_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboBoxStroke.SelectedItem is ComboBoxItem selectedItem)
-                currentStroke = (Brush)selectedItem.Tag;
+            if (ComboBoxStroke.SelectedItem is CustomComboBoxItem selectedItem)
+                currentStroke = selectedItem.Color;
         }
 
         private void ComboBoxFill_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboBoxFill.SelectedItem is ComboBoxItem selectedItem)
-                currentFill = (Brush)selectedItem.Tag;
+            if (ComboBoxFill.SelectedItem is CustomComboBoxItem selectedItem)
+                currentFill = selectedItem.Color;
         }
 
         private void PaintZone_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (isPolyMode(currentShape))
+            if (currentShape.SupportsPolyMode && ((CustomPolyShape)currentShape).IsPolyMode)
             {
-                ((MyPolyShape)currentShape).IsPolyMode = false;
+                currentShape.ExitPolyMode();
+                drawingHistory.SaveState(PaintZone);
+                updateButtons();
             }
             else
             {
                 isDrawing = true;
                 startPoint = e.GetPosition(PaintZone);
-                MyShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] {startPoint, currentStroke, currentFill, CurrentStrokeThickness});
-                currentShape = (shape == null) ? new MyLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness) : shape;
+                CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] {startPoint, currentStroke, currentFill, CurrentStrokeThickness});
+                currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
                 PaintZone.Children.Add(currentShape.GetShape());
 
             }
@@ -90,7 +116,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (isPolyMode(currentShape))
+            if (currentShape.SupportsPolyMode && ((CustomPolyShape)currentShape).IsPolyMode)
             {
                 Point currentPoint = e.GetPosition(PaintZone);
                 currentShape.Draw(currentPoint);
@@ -108,8 +134,12 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (isPolyDrawing(currentShape))
-                ((MyPolyShape)currentShape).IsPolyMode = true;
+            if (currentShape.SupportsPolyMode && isDrawing)
+                currentShape.EnterPolyMode();
+            else if (isDrawing) {
+                drawingHistory.SaveState(PaintZone);
+                updateButtons();
+            }
             isDrawing = false;
         }
 
@@ -120,18 +150,51 @@ namespace DrawZone
                 activeButton.IsChecked = false;
             }
             activeButton = (ToggleButton)sender;
-            currentShapeType = activeButton.Name.Substring(3);
+            currentShapeType = activeButton.Name.Substring(CustomShapeButtonDefaultValues.BUTTON_NAME_PREFIX.Length);
+        }
+
+        private void IncreaseStrokeThickness_Click(object sender, RoutedEventArgs e)
+        {
+            if (double.TryParse(TextBoxStrokeThickness.Text, CultureInfo.InvariantCulture, out var value))
+            {
+                CurrentStrokeThickness = value + 0.5;
+            }
+        }
+
+        private void DecreaseStrokeThickness_Click(object sender, RoutedEventArgs e)
+        {
+            if (double.TryParse(TextBoxStrokeThickness.Text, CultureInfo.InvariantCulture, out var value) && value > 0.5)
+            {
+                CurrentStrokeThickness = value - 0.5;
+            }
+        }
+
+        private void TextBoxStrokeThickness_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !char.IsDigit(e.Text, 0) && e.Text != ".";
+        }
+
+        private void btnUndo_Click(object sender, RoutedEventArgs e)
+        {
+            drawingHistory.Undo(PaintZone);
+            updateButtons();
+            isDrawing = false;
+            currentShape.ExitPolyMode();
 
         }
 
-        private bool isPolyMode(MyShape shape)
+        private void btnRedo_Click(object sender, RoutedEventArgs e)
         {
-            return (shape is MyPolyShape) && ((MyPolyShape)shape).IsPolyMode;
+            drawingHistory.Redo(PaintZone);
+            updateButtons();
+            isDrawing = false;
+            currentShape.ExitPolyMode();
         }
 
-        private bool isPolyDrawing(MyShape shape)
+        private void updateButtons()
         {
-            return (shape is MyPolyShape) && isDrawing;
+            btnUndo.IsEnabled = drawingHistory.CanUndo();
+            btnRedo.IsEnabled = drawingHistory.CanRedo();
         }
     }
 }

@@ -7,7 +7,7 @@ using DrawZone.Utils;
 
 namespace DrawZone.Shapes
 {
-    class MyRegularPolygon : MyShape
+    class CustomRegularPolygon : CustomShape
     {
         private Polygon polygon;
         public override void Draw(Point currentPoint)
@@ -33,7 +33,7 @@ namespace DrawZone.Shapes
             Canvas.SetTop(polygon, startPoint.Y - polygon.Height / 2);
         }
 
-        public MyRegularPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
+        public CustomRegularPolygon(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
             polygon = new Polygon();
             polygon.Stroke = stroke;

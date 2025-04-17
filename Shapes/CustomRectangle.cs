@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace DrawZone.Shapes
 {
-    class MyRectangle : MyShape
+    class CustomRectangle : CustomShape
     {
         private Rectangle rect;
         public override void Draw(Point currentPoint) 
@@ -19,7 +19,7 @@ namespace DrawZone.Shapes
             Canvas.SetTop(rect, y);
         }
 
-        public MyRectangle(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
+        public CustomRectangle(Point startPoint, Brush stroke, Brush fill, double strokeThickness) : base(startPoint)
         {
             rect = new Rectangle();
             rect.Width = 0;
