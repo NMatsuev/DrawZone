@@ -18,6 +18,7 @@ namespace DrawZone.Shapes
         public abstract void Draw(Point currentPoint);
         public abstract Shape GetShape();
         public virtual bool SupportsPolyMode => false;
+        public bool IsPolyMode { get; set; }
         public virtual void EnterPolyMode() { }
         public virtual void ExitPolyMode() { }
     }

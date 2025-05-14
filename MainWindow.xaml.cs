@@ -97,7 +97,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (currentShape.SupportsPolyMode && ((CustomPolyShape)currentShape).IsPolyMode)
+            if (currentShape.SupportsPolyMode && currentShape.IsPolyMode)
             {
                 currentShape.ExitPolyMode();
                 currentShape.IsDrawed = true;
@@ -119,7 +119,7 @@ namespace DrawZone
 
         private void PaintZone_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (currentShape.SupportsPolyMode && ((CustomPolyShape)currentShape).IsPolyMode)
+            if (currentShape.SupportsPolyMode && currentShape.IsPolyMode)
             {
                 Point currentPoint = e.GetPosition(PaintZone);
                 currentShape.Draw(currentPoint);
@@ -209,7 +209,6 @@ namespace DrawZone
         {
             PaintZone.Children.Clear();
             List<Shape> shapeList = drawingHistory.GetShapeList();
-            shapeList.Reverse();
             foreach (var shape in shapeList)
                 PaintZone.Children.Add(shape);
         }

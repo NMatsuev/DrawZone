@@ -9,7 +9,6 @@ namespace DrawZone.Shapes
     public abstract class CustomPolyShape : CustomShape
     {
         protected PointCollection points;
-        public bool IsPolyMode { get; protected set; }
 
         public CustomPolyShape(Point startPoint) : base(startPoint)
         {
