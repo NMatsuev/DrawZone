@@ -3,6 +3,8 @@ using System;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows;
+using Newtonsoft.Json;
+using System.Windows.Media.Media3D;
 
 namespace DrawZone.Shapes
 {
@@ -29,9 +31,48 @@ namespace DrawZone.Shapes
             rect.StrokeThickness = strokeThickness;
         }
 
+        public CustomRectangle() : this(new Point(0, 0), Brushes.Black, Brushes.Black, 0) { }
+
         public override Shape GetShape()
         {
             return rect;
+        }
+
+        public override string Serialize()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                Left = startPoint.X,
+                Top = startPoint.Y,
+                Fill = rect.Fill.ToString(),
+                Stroke = rect.Stroke.ToString(),
+                StrokeThickness = rect.StrokeThickness,
+                Width = rect.Width,
+                Height = rect.Height
+            });
+        }
+
+        public override void Deserialize(string json)
+        {
+            var baseData = JsonConvert.DeserializeAnonymousType(json, new
+            {
+                Left = 0.0,
+                Top = 0.0,
+                Fill = "",
+                Stroke = "",
+                StrokeThickness = 0.0,
+                Width = 0.0,
+                Height = 0.0
+            });
+
+            rect.Fill = new BrushConverter().ConvertFromString(baseData.Fill) as Brush;
+            rect.Stroke = new BrushConverter().ConvertFromString(baseData.Stroke) as Brush;
+            rect.StrokeThickness = baseData.StrokeThickness;
+            rect.Width = baseData.Width;
+            rect.Height = baseData.Height;
+            Canvas.SetLeft(rect, baseData.Left);
+            Canvas.SetTop(rect, baseData.Top);
+            startPoint = new Point(baseData.Left, baseData.Top);
         }
     }
 }

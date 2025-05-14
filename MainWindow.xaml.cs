@@ -13,7 +13,8 @@ using DrawZone.Controls;
 using DrawZone.Utils;
 using System.Globalization;
 using DrawZone.Core;
-using System.Windows.Shapes;
+using Microsoft.Win32;
+using System;
 
 namespace DrawZone
 {
@@ -31,8 +32,8 @@ namespace DrawZone
         private Brush currentFill;
         private Dictionary<string, ConstructorInfo> constructors;
         private HistoryStack drawingHistory;
-        private double CurrentStrokeThickness { get { return GetStrokeThickness(); } 
-                                                set { TextBoxStrokeThickness.Text = value.ToString(CultureInfo.InvariantCulture); } }
+        private double CurrentStrokeThickness { get { return GetStrokeThickness(); }
+            set { TextBoxStrokeThickness.Text = value.ToString(CultureInfo.InvariantCulture); } }
 
         public MainWindow()
         {
@@ -40,7 +41,7 @@ namespace DrawZone
 
             foreach (var (name, color) in CustomCmbBoxItemDefaultValues.COLORS)
             {
-                ComboBoxStroke.Items.Add(new CustomComboBoxItem (name, color));
+                ComboBoxStroke.Items.Add(new CustomComboBoxItem(name, color));
                 ComboBoxFill.Items.Add(new CustomComboBoxItem(name, color));
             }
 
@@ -101,16 +102,16 @@ namespace DrawZone
             {
                 currentShape.ExitPolyMode();
                 currentShape.IsDrawed = true;
-                drawingHistory.Push(currentShape.GetShape());
+                drawingHistory.Push(currentShape);
                 updateButtons();
                 updateCanvas();
             }
             else
             {
-               
+
                 isDrawing = true;
                 startPoint = e.GetPosition(PaintZone);
-                CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] {startPoint, currentStroke, currentFill, CurrentStrokeThickness});
+                CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] { startPoint, currentStroke, currentFill, CurrentStrokeThickness });
                 currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
                 currentShape.IsDrawed = false;
                 PaintZone.Children.Add(currentShape.GetShape());
@@ -143,13 +144,13 @@ namespace DrawZone
             else if (isDrawing) {
                 if (currentShape.IsDrawed)
                 {
-                    drawingHistory.Push(currentShape.GetShape());
+                    drawingHistory.Push(currentShape);
                     updateButtons();
                     updateCanvas();
                 }
                 else
                 {
-                    PaintZone.Children.RemoveAt(PaintZone.Children.Count-1);
+                    PaintZone.Children.RemoveAt(PaintZone.Children.Count - 1);
                 }
             }
             isDrawing = false;
@@ -205,12 +206,58 @@ namespace DrawZone
             currentShape.ExitPolyMode();
         }
 
+        private void btnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var openDialog = new OpenFileDialog();
+            openDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            openDialog.Title = "Load shapes";
+            openDialog.DefaultExt = "json";
+            if (openDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    drawingHistory.SetShapeList(Deserializer.DeserializeShapesFromFile(constructors, openDialog.FileName));
+                    updateCanvas();
+                    updateButtons();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error opening file: {ex.Message}", "Error");
+                }
+            }
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            var saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            saveDialog.Title = "Save shapes";
+            saveDialog.DefaultExt = "json";
+            if (saveDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    Serializer.SerializeShapesToFile(drawingHistory.GetShapeList(), saveDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving file: {ex.Message}", "Error");
+                }
+            }
+        }
+        private void btnNew_Click(object sender, RoutedEventArgs e)
+        {
+            drawingHistory.Clear();
+            updateCanvas();
+            updateButtons();
+        }
+
         private void updateCanvas()
         {
             PaintZone.Children.Clear();
-            List<Shape> shapeList = drawingHistory.GetShapeList();
+            List<CustomShape> shapeList = drawingHistory.GetShapeList();
             foreach (var shape in shapeList)
-                PaintZone.Children.Add(shape);
+                PaintZone.Children.Add(shape.GetShape());
         }
 
         private void updateButtons()

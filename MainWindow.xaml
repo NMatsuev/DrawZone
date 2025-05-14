@@ -76,13 +76,13 @@
             <RowDefinition Height="10*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Button MinWidth="30" MaxHeight ="40" Margin ="4 0 2 0" Background="White" VerticalAlignment="Center">
+            <Button Name ="btnNew" MinWidth="30" MaxHeight ="40" Margin ="4 0 2 0" Background="White" VerticalAlignment="Center" Click="btnNew_Click">
                 <Image Source="UI/Icons/Create.png"></Image>
             </Button>
-            <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
+            <Button Name ="btnOpen" MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White" Click="btnOpen_Click">
                 <Image Source="UI/Icons/Open.png"></Image>
             </Button>
-            <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
+            <Button Name="btnSave" MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White" Click="btnSave_Click">
                 <Image Source="UI/Icons/SaveAs.png"></Image>
             </Button>
             <Button Name="btnUndo" MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White" Click="btnUndo_Click">

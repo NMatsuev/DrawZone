@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Shapes;
+using DrawZone.Shapes;
 
 namespace DrawZone.Core
 {
     public class HistoryStack
     {
-        private Stack<Shape> stack;
+        private Stack<CustomShape> stack;
 
-        private readonly List<Shape> list;
+        private List<CustomShape> list;
 
         private readonly int maxSize;
 
@@ -19,12 +20,12 @@ namespace DrawZone.Core
                 throw new ArgumentException("Max size must be greater than 0", nameof(maxSize));
 
             this.maxSize = maxSize;
-            stack = new Stack<Shape>(maxSize);
-            list = new List<Shape>(maxSize);
+            stack = new Stack<CustomShape>(maxSize);
+            list = new List<CustomShape>(maxSize);
            
         }
 
-        public void Push(Shape item)
+        public void Push(CustomShape item)
         {
             if (stack.Count > 0)
             {
@@ -52,9 +53,20 @@ namespace DrawZone.Core
 
         }
 
-        public List<Shape> GetShapeList()
+        public List<CustomShape> GetShapeList()
         {
             return list;
+        }
+
+        public void SetShapeList(List<CustomShape> list)
+        {
+            this.list = list;
+        }
+
+        public void Clear()
+        {
+            list.Clear();
+            stack.Clear();
         }
 
         public bool CanUndo() => list.Count > 0;

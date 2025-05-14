@@ -33,9 +33,22 @@ namespace DrawZone.Factories
         {
             if (constructors.TryGetValue(shapeName, out ConstructorInfo? constructor) && constructor != null)
             {
-                return (CustomShape)constructor.Invoke(parameters);
+                   return (CustomShape)constructor.Invoke(parameters);
             }
             throw new ArgumentException($"Shape '{shapeName}' not found or has no valid constructor.");
+        }
+
+        public static CustomShape CreateShapeInstance(Dictionary<string, ConstructorInfo> constructors, string shapeName)
+        {
+            if (constructors.TryGetValue(shapeName, out ConstructorInfo constructor))
+            {
+                var emptyConstructor = constructor.DeclaringType.GetConstructor(Type.EmptyTypes);
+                if (emptyConstructor != null)
+                {
+                    return (CustomShape)emptyConstructor.Invoke(null);
+                }
+            }
+            throw new ArgumentException($"Shape '{shapeName}' не имеет конструктора по умолчанию");
         }
     }
 }
