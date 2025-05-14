@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Shapes;
 
 namespace DrawZone.Core
 {
-    public class HistoryStack<T>
+    public class HistoryStack
     {
-        private readonly Stack<T> undoStack;
+        private readonly Stack<Shape> stack;
 
-        private readonly Stack<T> redoStack;
+        private List<Shape> list;
+
+        private int position;
 
         private readonly int maxSize;
-
-        public int UndoCount => undoStack.Count;
-        public int RedoCount => redoStack.Count;
-        public int MaxSize => maxSize;
 
         public HistoryStack(int maxSize = 100)
         {
@@ -21,62 +21,51 @@ namespace DrawZone.Core
                 throw new ArgumentException("Max size must be greater than 0", nameof(maxSize));
 
             this.maxSize = maxSize;
-            undoStack = new Stack<T>(maxSize);
-            redoStack = new Stack<T>(maxSize);
+            stack = new Stack<Shape>(maxSize);
+            list = new List<Shape>(maxSize);
+            position = 0;
+           
         }
 
-        public void Push(T item)
+        public void Push(Shape item)
         {
-            redoStack.Clear();
-
-            if (undoStack.Count >= maxSize)
+            stack.Push(item);
+            if (position == list.Count)
             {
-                var temp = new List<T>(undoStack);
-                temp.RemoveAt(0);
-                undoStack.Clear();
-                foreach (var element in temp)
-                {
-                   undoStack.Push(element);
-                }
+                list.Add(item);
+                position++;
             }
-
-            undoStack.Push(item);
+            else
+            {
+                list = stack.ToList();
+                list.Reverse();
+                position = list.Count;
+            }
         }
 
-        public T Undo()
+        public void Undo()
         {
-            if (undoStack.Count == 0)
-                throw new InvalidOperationException("Undo stack is empty");
-
-            var item = undoStack.Pop();
-            redoStack.Push(item);
-
-            return item;
+            if (stack.Count > 0)
+            {
+                stack.Pop();
+                position--;
+            }
         }
 
-        public T Redo()
+        public void Redo()
         {
-            if (redoStack.Count == 0)
-                throw new InvalidOperationException("Redo stack is empty");
+            if (position <= list.Count)
+                stack.Push(list.ElementAt(position++));
 
-            var item = redoStack.Pop();
-            undoStack.Push(item);
-
-            return item;
         }
 
-        public T PeekUndo()
+        public List<Shape> GetShapeList()
         {
-            return undoStack.Peek();
+            return stack.ToList();
         }
 
-        public T PeekRedo()
-        {
-            return redoStack.Peek();
-        }
+        public bool CanUndo() => stack.Count > 0;
 
-        public bool CanUndo() => undoStack.Count > 1;
-
-        public bool CanRedo() => redoStack.Count > 0;
+        public bool CanRedo() => position < list.Count;
     }
 }

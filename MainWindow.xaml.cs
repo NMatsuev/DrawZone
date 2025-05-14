@@ -13,6 +13,7 @@ using DrawZone.Controls;
 using DrawZone.Utils;
 using System.Globalization;
 using DrawZone.Core;
+using System.Windows.Shapes;
 
 namespace DrawZone
 {
@@ -29,7 +30,7 @@ namespace DrawZone
         private Brush currentStroke;
         private Brush currentFill;
         private Dictionary<string, ConstructorInfo> constructors;
-        private DrawingHistory drawingHistory;
+        private HistoryStack drawingHistory;
         private double CurrentStrokeThickness { get { return GetStrokeThickness(); } 
                                                 set { TextBoxStrokeThickness.Text = value.ToString(CultureInfo.InvariantCulture); } }
 
@@ -72,8 +73,7 @@ namespace DrawZone
             CurrentStrokeThickness = MainDefaultValues.DEFAULT_STROKE_THICKNESS;
             CustomShape? shape = ShapeFactory.CreateShapeInstance(constructors, currentShapeType, new object[] { startPoint, currentStroke, currentFill, CurrentStrokeThickness });
             currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
-            drawingHistory = new DrawingHistory();
-            drawingHistory.SaveState(PaintZone);
+            drawingHistory = new HistoryStack();
             btnRedo.IsEnabled = false;
             btnUndo.IsEnabled = false;
         }
@@ -100,9 +100,10 @@ namespace DrawZone
             if (currentShape.SupportsPolyMode && ((CustomPolyShape)currentShape).IsPolyMode)
             {
                 currentShape.ExitPolyMode();
-                drawingHistory.SaveState(PaintZone);
-                updateButtons();
                 currentShape.IsDrawed = true;
+                drawingHistory.Push(currentShape.GetShape());
+                updateButtons();
+                updateCanvas();
             }
             else
             {
@@ -113,8 +114,6 @@ namespace DrawZone
                 currentShape = shape ?? new CustomLine(startPoint, currentStroke, currentFill, CurrentStrokeThickness);
                 currentShape.IsDrawed = false;
                 PaintZone.Children.Add(currentShape.GetShape());
-
-
             }
         }
 
@@ -144,8 +143,9 @@ namespace DrawZone
             else if (isDrawing) {
                 if (currentShape.IsDrawed)
                 {
-                    drawingHistory.SaveState(PaintZone);
+                    drawingHistory.Push(currentShape.GetShape());
                     updateButtons();
+                    updateCanvas();
                 }
                 else
                 {
@@ -188,8 +188,9 @@ namespace DrawZone
 
         private void btnUndo_Click(object sender, RoutedEventArgs e)
         {
-            drawingHistory.Undo(PaintZone);
+            drawingHistory.Undo();
             updateButtons();
+            updateCanvas();
             isDrawing = false;
             currentShape.ExitPolyMode();
 
@@ -197,10 +198,20 @@ namespace DrawZone
 
         private void btnRedo_Click(object sender, RoutedEventArgs e)
         {
-            drawingHistory.Redo(PaintZone);
+            drawingHistory.Redo();
             updateButtons();
+            updateCanvas();
             isDrawing = false;
             currentShape.ExitPolyMode();
+        }
+
+        private void updateCanvas()
+        {
+            PaintZone.Children.Clear();
+            List<Shape> shapeList = drawingHistory.GetShapeList();
+            shapeList.Reverse();
+            foreach (var shape in shapeList)
+                PaintZone.Children.Add(shape);
         }
 
         private void updateButtons()
