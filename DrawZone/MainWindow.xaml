@@ -91,7 +91,7 @@
             <Button Name="btnRedo" MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White" Click="btnRedo_Click">
                 <Image Source="UI/Icons/Redo.png"></Image>
             </Button>
-            <Button MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White">
+            <Button Name="btnLoadPlugin" MinWidth="30" MaxHeight ="40" Margin ="2 0 2 0" Background="White" Click="btnLoadPlugin_Click">
                 <Image Source="UI/Icons/AddPlugin.png"></Image>
             </Button>
         </StackPanel>

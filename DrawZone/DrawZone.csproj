@@ -18,6 +18,7 @@
     <None Remove="UI\Icons\AddPlugin.png" />
     <None Remove="UI\Icons\Create.png" />
     <None Remove="UI\Icons\Open.png" />
+    <None Remove="UI\Icons\Plugin.png" />
     <None Remove="UI\Icons\Redo.png" />
     <None Remove="UI\Icons\SaveAs.png" />
     <None Remove="UI\Icons\Undo.png" />
@@ -38,6 +39,7 @@
     <Resource Include="UI\Icons\CustomRectangle.png" />
     <Resource Include="UI\Icons\CustomRegularPolygon.png" />
     <Resource Include="UI\Icons\Open.png" />
+    <Resource Include="UI\Icons\Plugin.png" />
     <Resource Include="UI\Icons\Redo.png" />
     <Resource Include="UI\Icons\SaveAs.png" />
     <Resource Include="UI\Icons\Undo.png" />

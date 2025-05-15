@@ -4,7 +4,6 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows;
 using Newtonsoft.Json;
-using System.Windows.Media.Media3D;
 
 namespace DrawZone.Shapes
 {

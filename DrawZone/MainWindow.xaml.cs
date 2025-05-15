@@ -245,6 +245,26 @@ namespace DrawZone
                 }
             }
         }
+
+        private void btnLoadPlugin_Click(object sender, RoutedEventArgs e)
+        {
+            var openDialog = new OpenFileDialog();
+            openDialog.Filter = "DLL files (*.dll)|*.dll";
+            openDialog.Title = "Load shape";
+            openDialog.DefaultExt = "dll";
+            if (openDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    PluginLoader.LoadPluginFromFile(openDialog.FileName, ShapeWrapPanel, constructors, PaintZone_MyShapeButtonClick);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading plugin: {ex.Message}", "Error");
+                }
+            }
+        }
+
         private void btnNew_Click(object sender, RoutedEventArgs e)
         {
             drawingHistory.Clear();
@@ -265,5 +285,6 @@ namespace DrawZone
             btnUndo.IsEnabled = drawingHistory.CanUndo();
             btnRedo.IsEnabled = drawingHistory.CanRedo();
         }
+
     }
 }
